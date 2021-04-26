@@ -1,0 +1,7 @@
+bot:
+    build: .
+    restart: always
+    stdin_open: true
+    tty: true
+    environment:
+    - DISCORD_BOTKEY=${DISCORD_BOTKEY}
