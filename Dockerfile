@@ -7,4 +7,8 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD [ "python", "bot.py" ]
+WORKDIR /app/src
+
+CMD ["mypy", "/app/src/"]
+
+CMD [ "python", "main.py" ]
