@@ -3,8 +3,8 @@ import os
 from pomo_bot import bot
 
 def main():
-    # Probably shouldn't have configured all of this logging stuff b/c of YAGNI
-    # But it was interesting messing around with it so w/e
+    # Probably shouldn't have configured all of this logging stuff b/c I really don't need it
+    # But wanted to try it so w/e
 
     # Create formatter
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(name)s | %(message)s')
