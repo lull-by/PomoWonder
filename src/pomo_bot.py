@@ -5,6 +5,8 @@ import asyncio
 import time
 
 logger = logging.getLogger(__name__)
+default_work_time = 25 * 60
+default_break_time = 5 * 60
 
 class PomodoroTimer():
     is_paused = False
@@ -53,7 +55,12 @@ class PomodoroTimer():
 
     def get_time_elapsed(self):
         self._update_pause_duration()
-        return time.time() - self.start_time - self.pause_duration
+        if self.start_time is None:
+            return 0
+        elif self.pause_duration is None:
+            return time.time() - self.start_time
+        else:
+            return time.time() - self.start_time - self.pause_duration
 
     def _update_pause_duration(self):
         if (self.pause_update_time is not None):
@@ -99,9 +106,9 @@ class PomodoroState():
     def set_timer(self, is_work):
         self.is_work = is_work
         if is_work:
-            self.timer = PomodoroTimer(self.work_timer_duration)
+            self.timer = PomodoroTimer(self, self.work_timer_duration)
         else:
-            self.timer = PomodoroTimer(self.break_timer_duration)
+            self.timer = PomodoroTimer(self, self.break_timer_duration)
     
     def set_next_timer(self):
         if self.is_work:
@@ -139,7 +146,7 @@ class Pomodoro(commands.Cog):
     async def play(self, ctx):
         state = self.get_pomodoro_state(ctx.author)
         if state is None:
-            new_state = PomodoroState(self, ctx, True, 15, 10)
+            new_state = PomodoroState(self, ctx, True, default_work_time, default_break_time)
             self.set_pomodoro_state(ctx.author, new_state)
             state = new_state
         
