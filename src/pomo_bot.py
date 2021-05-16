@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 default_work_time = 25 * 60
 default_break_time = 5 * 60
 
+
 class PomodoroTimer():
     is_paused = False
 
@@ -18,7 +19,7 @@ class PomodoroTimer():
         self.pause_duration = 0
         self.state = state
         self.timer_duration = timer_duration
-    
+
     def start(self):
         logger.debug("start")
         if (self.start_time is None):
@@ -26,7 +27,7 @@ class PomodoroTimer():
             self._tick.start()
         else:
             raise(RuntimeError("Timer already started"))
-    
+
     def pause(self):
         if (not self.is_paused):
             self.pause_update_time = time.time()
@@ -34,7 +35,7 @@ class PomodoroTimer():
             self._tick.stop()
         else:
             raise(RuntimeError("Cannot pause when already paused"))
-    
+
     def unpause(self):
         if (self.is_paused):
             self._update_pause_duration()
@@ -43,7 +44,7 @@ class PomodoroTimer():
             self._tick.start()
         else:
             raise(RuntimeError("Cannot unpause when already unpaused"))
-    
+
     def stop(self):
         if (self.start_time is not None):
             self.is_paused = False
@@ -102,28 +103,28 @@ class PomodoroState():
 
     def stop_timer(self):
         self.timer.stop()
-    
+
     def set_timer(self, is_work):
         self.is_work = is_work
         if is_work:
             self.timer = PomodoroTimer(self, self.work_timer_duration)
         else:
             self.timer = PomodoroTimer(self, self.break_timer_duration)
-    
+
     def set_next_timer(self):
         if self.is_work:
             self.set_timer(False)
         else:
             self.set_timer(True)
-    
+
     async def on_timer_end(self):
         await self.cog.on_timer_end(self.ctx)
         self.set_next_timer()
         self.start_timer()
-    
+
     def is_paused(self):
         return self.timer.is_paused
-    
+
     def get_time_elapsed(self):
         return self.timer.get_time_elapsed()
 
@@ -146,10 +147,11 @@ class Pomodoro(commands.Cog):
     async def play(self, ctx):
         state = self.get_pomodoro_state(ctx.author)
         if state is None:
-            new_state = PomodoroState(self, ctx, True, default_work_time, default_break_time)
+            new_state = PomodoroState(
+                self, ctx, True, default_work_time, default_break_time)
             self.set_pomodoro_state(ctx.author, new_state)
             state = new_state
-        
+
         if state.is_paused():
             state.unpause_timer()
             await ctx.send(f'Unpaused timer for {ctx.author.mention}')
@@ -199,7 +201,6 @@ class Pomodoro(commands.Cog):
                 await ctx.send(f'Work time elapsed for {ctx.author.mention} is {time_elapsed_min:02}:{time_elapsed_sec:02}')
             else:
                 await ctx.send(f'Break time elapsed for {ctx.author.mention} is {time_elapsed_min:02}:{time_elapsed_sec:02}')
-
 
     async def on_timer_end(self, ctx):
         state = self.get_pomodoro_state(ctx.author)
