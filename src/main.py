@@ -24,7 +24,7 @@ def main():
 
     # Set discord.py logger to log to a file
     dis_log = logging.getLogger('discord')
-    dis_log.setLevel(logging.DEBUG)
+    dis_log.setLevel(logging.WARN)
     # Create file handler
     dis_fh = logging.FileHandler(filename='dicord.log', encoding='utf-8', mode='w')
     dis_fh.setFormatter(formatter)

@@ -1,1 +1,1 @@
-discord-py-slash-command
+mypy
